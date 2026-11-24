@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#F59E0B" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="DompetCerdas" />
+  <meta name="description" content="Aplikasi Pencatat Keuangan Pribadi & Alokasi Cerdas 50/30/20" />
+  <title>DompetCerdas — Pencatat Keuangan Pribadi & Alokasi 50/30/20</title>
+
+  <!-- Custom App Icon (SVG Data URI for Browser Tab, iOS & Android PWA) -->
+  <link id="app-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F59E0B'/%3E%3Cstop offset='100%25' stop-color='%23EA580C'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='112' fill='url(%23g)'/%3E%3Cpath d='M120 184c0-26.5 21.5-48 48-48h184c13.3 0 24 10.7 24 24v24H168c-8.8 0-16 7.2-16 16s7.2 16 16 16h216c17.7 0 32 14.3 32 32v112c0 26.5-21.5 48-48 48H168c-26.5 0-48-21.5-48-48V184z' fill='%23FFFDF9'/%3E%3Ccircle cx='348' cy='296' r='22' fill='%23EA580C'/%3E%3C/svg%3E" />
+  <link id="app-apple-icon" rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F59E0B'/%3E%3Cstop offset='100%25' stop-color='%23EA580C'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='112' fill='url(%23g)'/%3E%3Cpath d='M120 184c0-26.5 21.5-48 48-48h184c13.3 0 24 10.7 24 24v24H168c-8.8 0-16 7.2-16 16s7.2 16 16 16h216c17.7 0 32 14.3 32 32v112c0 26.5-21.5 48-48 48H168c-26.5 0-48-21.5-48-48V184z' fill='%23FFFDF9'/%3E%3Ccircle cx='348' cy='296' r='22' fill='%23EA580C'/%3E%3C/svg%3E" />
+  <link id="pwa-manifest" rel="manifest" href="" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+          colors: {
+            ivory: {
+              50: '#FFFDF9',
+              100: '#FDF8EE',
+              200: '#F8EEDB',
+              300: '#EFE0C4',
+            },
+            amberwarm: {
+              400: '#FBBF24',
+              500: '#F59E0B',
+              600: '#D97706',
+              700: '#B45309',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .tour-highlight {
+      position: relative;
+      z-index: 45 !important;
+      box-shadow: 0 0 0 4px #F59E0B, 0 20px 35px -10px rgba(245, 158, 11, 0.35) !important;
+      border-radius: 1rem;
+      transition: all 0.3s ease;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(217, 119, 6, 0.3); border-radius: 999px; }
+  </style>
+</head>
+<body class="bg-ivory-100 text-stone-800 dark:bg-slate-950 dark:text-stone-100 transition-colors duration-200 min-h-screen flex flex-col">
+
+  <!-- =========================================================
+       GERBANG AKTIVASI LISENSI & FREE TRIAL 30 HARI (OPSI B)
+       ========================================================= -->
+  <div id="licenseGate" class="fixed inset-0 z-50 bg-ivory-100/98 dark:bg-slate-950/98 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-ivory-50 dark:bg-slate-900 border-2 border-amber-300/80 dark:border-slate-700 rounded-3xl max-w-md w-full p-5 sm:p-7 shadow-2xl my-auto">
+      <!-- Logo & Title -->
+      <div class="flex flex-col items-center text-center mb-5">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/30 mb-3">
+          <i data-lucide="shield-check" class="w-7 h-7"></i>
+        </div>
+        <h2 class="font-extrabold text-xl sm:text-2xl tracking-tight">
+          Aktivasi Dompet<span class="text-amber-600 dark:text-amber-400">Cerdas</span>
+        </h2>
+        <p class="text-xs sm:text-sm text-stone-500 dark:text-slate-400 mt-1">
+          Akses eksklusif pengguna terdaftar atau coba gratis selama 30 hari penuh.
+        </p>
+      </div>
+
+      <!-- Alert Message Box -->
+      <div id="licenseAlert" class="hidden mb-4 p-3 rounded-xl text-xs font-semibold border"></div>
+
+      <!-- Form Kode Lisensi -->
+      <form id="licenseForm" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-stone-600 dark:text-slate-300 mb-1">Masukkan Kode Lisensi Anda</label>
+          <input type="text" id="licenseCodeInput" placeholder="Contoh: DC-FULL-001" required
+            class="w-full px-4 py-3 rounded-xl bg-ivory-100 dark:bg-slate-800 border border-amber-300 dark:border-slate-700 font-extrabold uppercase tracking-wider text-sm text-center focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <button type="submit" id="btnVerifyCode" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold text-sm shadow-md shadow-amber-500/20 transition flex items-center justify-center gap-2">
+          <i data-lucide="key-round" class="w-4 h-4"></i>
+          <span>Aktifkan Kode Lisensi</span>
+        </button>
+      </form>
+
+      <div class="relative my-5 flex items-center justify-center">
+        <div class="border-t border-amber-200/80 dark:border-slate-800 w-full"></div>
+        <span class="bg-ivory-50 dark:bg-slate-900 px-3 text-[11px] font-bold text-stone-400 uppercase">Atau</span>
+        <div class="border-t border-amber-200/80 dark:border-slate-800 w-full"></div>
+      </div>
+
+      <!-- Tombol Free Trial 30 Hari -->
+      <div class="space-y-2.5">
+        <input type="text" id="trialNameInput" placeholder="Nama Anda (untuk Free Trial 30 Hari)"
+          class="w-full px-3.5 py-2.5 rounded-xl bg-ivory-100 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        <button type="button" id="btnStartTrial" onclick="activateFreeTrial()"
+          class="w-full py-2.5 px-4 rounded-xl bg-amber-100 hover:bg-amber-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-800 dark:text-amber-300 font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2">
+          <i data-lucide="clock" class="w-4 h-4"></i>
+          <span>Mulai Coba Gratis 30 Hari</span>
+        </button>
+      </div>
+
+      <!-- Footer Kontak Admin -->
+      <div class="mt-5 pt-4 border-t border-amber-200/60 dark:border-slate-800 flex flex-col items-center gap-2 text-center">
+        <p class="text-[11px] text-stone-500 dark:text-slate-400">Belum punya kode lisensi penuh? Hubungi admin:</p>
+        <a id="gateWaLink" href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition">
+          <i data-lucide="message-circle" class="w-4 h-4"></i> Beli / Minta Kode via WhatsApp
+        </a>
+        <p id="deviceIdDisplay" class="text-[10px] text-stone-400 font-mono mt-1"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUS BANNER LISENSI / SISA TRIAL -->
+  <div id="licenseStatusBanner" class="hidden bg-amber-100/90 dark:bg-slate-900 border-b border-amber-300/70 dark:border-slate-800 px-3 py-1.5 text-[11px] sm:text-xs">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-2">
+      <div class="flex items-center gap-1.5 min-w-0">
+        <i data-lucide="badge-check" class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0"></i>
+        <span id="licenseStatusText" class="truncate font-semibold text-stone-700 dark:text-stone-200">Lisensi Aktif</span>
+      </div>
+      <button onclick="openLicenseGateForUpgrade()" class="shrink-0 font-bold text-amber-700 dark:text-amber-400 hover:underline">
+        Ganti / Upgrade Kode
+      </button>
+    </div>
+  </div>
+
+  <!-- PWA INSTALL BANNER -->
+  <div id="installBanner" class="hidden bg-gradient-to-r from-amber-600 to-orange-600 text-white px-3 py-2 text-xs sm:text-sm">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2 min-w-0">
+        <i data-lucide="smartphone" class="w-4 h-4 shrink-0"></i>
+        <span class="truncate font-semibold">Pasang DompetCerdas ke layar utama HP untuk akses cepat!</span>
+      </div>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button id="btnInstallPwa" class="px-3 py-1 rounded-lg bg-white text-amber-700 font-extrabold text-xs shadow-xs hover:bg-amber-50 transition">
+          Instal App
+        </button>
+        <button onclick="document.getElementById('installBanner').classList.add('hidden')" class="p-1 text-white/80 hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER (Mobile-Compact & Overflow-Safe) -->
+  <header class="sticky top-0 z-30 bg-ivory-50/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-amber-200/70 dark:border-slate-800 w-full">
+    <div class="max-w-6xl mx-auto px-2.5 sm:px-6 min-h-16 py-2 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
+      <!-- Brand -->
+      <div class="flex items-center gap-2 shrink-0">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-md shadow-amber-500/20">
+          <i data-lucide="wallet" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-sm sm:text-lg tracking-tight leading-none">
+            Dompet<span class="text-amber-600 dark:text-amber-400">Cerdas</span>
+          </h1>
+          <p class="text-[10px] sm:text-xs text-stone-500 dark:text-slate-400 hidden md:block">Kelola Arus Kas & 50/30/20</p>
+        </div>
+      </div>
+
+	<!-- Controls (High-Contrast & Crisp Icon Buttons) -->
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <!-- Month Filter -->
+        <div class="relative flex items-center bg-ivory-200/90 dark:bg-slate-800 border border-amber-300/90 dark:border-amber-500/35 rounded-xl px-2 sm:px-2.5 py-1.5 shadow-xs">
+          <i data-lucide="calendar" class="w-4 h-4 text-amber-600 dark:text-amber-400 mr-1 shrink-0" stroke-width="2.25"></i>
+          <input type="month" id="monthFilter" class="bg-transparent text-[11px] sm:text-sm font-bold focus:outline-none w-[96px] sm:w-auto text-stone-800 dark:text-white" />
+        </div>
+
+        <!-- Tour Button -->
+        <button onclick="startTour(0)" title="Tur Cepat" aria-label="Tur Cepat" class="w-8 h-8 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-xl bg-amber-100 hover:bg-amber-200 dark:bg-amber-500/15 dark:hover:bg-amber-500/25 border border-amber-300/80 dark:border-amber-400/45 text-amber-800 dark:text-amber-300 transition flex items-center justify-center gap-1.5 text-xs font-bold shadow-xs shrink-0">
+          <i data-lucide="compass" class="w-4 h-4 shrink-0" stroke-width="2.25"></i>
+          <span class="hidden lg:inline">Tur</span>
+        </button>
+
+        <!-- Guide Button -->
+        <button onclick="openModal('guideModal')" title="Panduan Penggunaan" aria-label="Panduan Penggunaan" class="w-8 h-8 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-xl bg-amber-100 hover:bg-amber-200 dark:bg-amber-500/15 dark:hover:bg-amber-500/25 border border-amber-300/80 dark:border-amber-400/45 text-amber-800 dark:text-amber-300 transition flex items-center justify-center gap-1.5 text-xs font-bold shadow-xs shrink-0">
+          <i data-lucide="book-open" class="w-4 h-4 shrink-0" stroke-width="2.25"></i>
+          <span class="hidden lg:inline">Panduan</span>
+        </button>
+
+        <!-- Data & Export Button -->
+        <button onclick="openModal('dataModal')" title="Data & Ekspor" aria-label="Data & Ekspor" class="w-8 h-8 sm:w-auto sm:h-auto sm:px-3 sm:py-2 rounded-xl bg-amber-100 hover:bg-amber-200 dark:bg-amber-500/15 dark:hover:bg-amber-500/25 border border-amber-300/80 dark:border-amber-400/45 text-amber-800 dark:text-amber-300 transition flex items-center justify-center gap-1.5 text-xs font-bold shadow-xs shrink-0">
+          <i data-lucide="database" class="w-4 h-4 shrink-0" stroke-width="2.25"></i>
+          <span class="hidden md:inline">Data</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button id="themeToggle" title="Ganti Tema Terang / Gelap" aria-label="Ganti Tema Terang / Gelap" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-500 hover:bg-amber-600 dark:bg-amber-400 dark:hover:bg-amber-300 border border-amber-600/40 dark:border-amber-200 text-white dark:text-slate-950 transition flex items-center justify-center shadow-sm shrink-0">
+          <i data-lucide="moon" id="themeIcon" class="w-4 h-4" stroke-width="2.4"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 py-5 space-y-6">
+
+    <!-- STEP 1 TARGET: RINGKASAN SALDO -->
+    <section id="sec-summary" class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+      <div class="bg-gradient-to-br from-amber-500 via-amber-600 to-orange-600 text-white rounded-2xl p-4 sm:p-5 shadow-lg shadow-amber-500/20 relative overflow-hidden">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-amber-100">Sisa Saldo Bulan Ini</span>
+          <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+            <i data-lucide="landmark" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div id="netBalance" class="text-2xl sm:text-3xl font-extrabold tracking-tight">Rp 0</div>
+        <p id="savingsRateText" class="text-xs text-amber-100 mt-1.5">Rasio tabungan: 0%</p>
+      </div>
+
+      <div class="bg-ivory-50 dark:bg-slate-900 border border-amber-200/70 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-slate-400">Total Pemasukan</span>
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <i data-lucide="arrow-down-left" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div id="totalIncome" class="text-xl sm:text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">Rp 0</div>
+        <p class="text-xs text-stone-500 dark:text-slate-400 mt-1.5">Dasar hitung alokasi 50/30/20</p>
+      </div>
+
+      <div class="bg-ivory-50 dark:bg-slate-900 border border-amber-200/70 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-slate-400">Total Pengeluaran</span>
+          <div class="w-8 h-8 rounded-lg bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+            <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div id="totalExpense" class="text-xl sm:text-2xl font-extrabold text-rose-600 dark:text-rose-400">Rp 0</div>
+        <p id="expensePercentText" class="text-xs text-stone-500 dark:text-slate-400 mt-1.5">0% dari total pemasukan</p>
+      </div>
+    </section>
+
+    <!-- STEP 2 TARGET: ALOKASI CERDAS 50/30/20 -->
+    <section id="sec-allocation" class="bg-ivory-50 dark:bg-slate-900 border border-amber-200/70 dark:border-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+        <div>
+          <h2 class="font-bold text-base sm:text-lg flex items-center gap-2">
+            <i data-lucide="pie-chart" class="w-5 h-5 text-amber-600 dark:text-amber-400"></i>
+            Alokasi Cerdas Otomatis (50 / 30 / 20)
+          </h2>
+          <p class="text-xs text-stone-500 dark:text-slate-400">Batas anggaran ideal dihitung otomatis dari total pemasukan bulan ini.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="allocationCards"></div>
+    </section>
+
+    <!-- MAIN GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- LEFT COLUMN (5 cols) -->
+      <div class="lg:col-span-5 space-y-6">
+
+        <!-- STEP 3 TARGET: CATAT TRANSAKSI CEPAT -->
+        <section id="sec-form" class="bg-ivory-50 dark:bg-slate-900 border border-amber-200/70 dark:border-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm">
+          <h2 class="font-bold text-base sm:text-lg mb-4 flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-5 h-5 text-amber-600 dark:text-amber-400"></i>
+            <span id="formTitle">Catat Transaksi Cepat</span>
+          </h2>
+
+          <div class="grid grid-cols-2 gap-2 p-1 bg-ivory-200/80 dark:bg-slate-800 rounded-xl mb-4">
+            <button type="button" id="btnTypeExpense" onclick="setTxType('expense')" class="py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-rose-600 text-white shadow-sm">
+              Pengeluaran (-)
+            </button>
+            <button type="button" id="btnTypeIncome" onclick="setTxType('income')" class="py-2 rounded-lg text-xs sm:text-sm font-bold transition text-stone-600 dark:text-slate-300">
+              Pemasukan (+)
+            </button>
+          </div>
+
+          <div id="quickTagsBox" class="mb-4">
+            <p class="text-[11px] font-semibold text-stone-500 dark:text-slate-400 mb-2">Isi Cepat (1x Klik):</p>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="applyQuickTag('Makan Harian', 25000, 'pokok')" class="text-xs px-2.5 py-1 rounded-lg bg-amber-100/80 hover:bg-amber-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-900 dark:text-amber-300 font-medium transition">🍱 Makan 25rb</button>
+              <button type="button" onclick="applyQuickTag('Isi Bensin', 30000, 'pokok')" class="text-xs px-2.5 py-1 rounded-lg bg-amber-100/80 hover:bg-amber-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-900 dark:text-amber-300 font-medium transition">⛽ Bensin 30rb</button>
+              <button type="button" onclick="applyQuickTag('Kopi & Camilan', 20000, 'keinginan')" class="text-xs px-2.5 py-1 rounded-lg bg-amber-100/80 hover:bg-amber-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-900 dark:text-amber-300 font-medium transition">☕ Kopi 20rb</button>
+              <button type="button" onclick="applyQuickTag('Sisihkan Tabungan', 100000, 'tabungan')" class="text-xs px-2.5 py-1 rounded-lg bg-amber-100/80 hover:bg-amber-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-900 dark:text-amber-300 font-medium transition">💰 Nabung 100rb</button>
+            </div>
+          </div>
+
+          <form id="txForm" class="space-y-3.5">
+            <input type="hidden" id="editTxId" value="" />
+            <input type="hidden" id="txType" value="expense" />
+
+            <div>
+              <label class="block text-xs font-semibold mb-1 text-stone-600 dark:text-slate-300">Nominal (Rp)</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-stone-400">Rp</span>
+                <input type="text" id="txAmount" inputmode="numeric" placeholder="0" required class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-ivory-100 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 font-bold text-base focus:outline-none focus:ring-2 focus:ring-amber-500" />
+              </div>
+            </div>
+
+            <div id="bucketField">
+              <label class="block text-xs font-semibold mb-1 text-stone-600 dark:text-slate-300">Pos Anggaran 50/30/20</label>
+              <select id="txBucket" class="w-full px-3.5 py-2.5 rounded-xl bg-ivory-100 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="pokok">50% — Kebutuhan Pokok (Makan, Listrik, Transport)</option>
+                <option value="keinginan">30% — Keinginan (Jajan, Hiburan, Belanja Non-Pokok)</option>
+                <option value="tabungan">20% — Tabungan, Investasi & Dana Darurat</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold mb-1 text-stone-600 dark:text-slate-300">Keterangan / Catatan</label>
+              <input type="text" id="txNote" placeholder="Contoh: Belanja kebutuhan dapur / Gaji bulanan" required class="w-full px-3.5 py-2.5 rounded-xl bg-ivory-100 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold mb-1 text-stone-600 dark:text-slate-300">Tanggal</label>
+              <input type="date" id="txDate" required class="w-full px-3.5 py-2.5 rounded-xl bg-ivory-100 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+            </div>
+
+            <div class="flex gap-2 pt-1">
+              <button type="submit" class="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold text-sm shadow-md shadow-amber-500/20 transition flex items-center justify-center gap-2">
+                <i data-lucide="check" class="w-4 h-4"></i>
+                <span id="submitBtnText">Simpan Transaksi</span>
+              </button>
+              <button type="button" id="cancelEditBtn" onclick="resetForm()" class="hidden py-2.5 px-3 rounded-xl bg-stone-200 dark:bg-slate-800 text-stone-700 dark:text-slate-300 font-semibold text-xs">
+                Batal
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- STEP 4 TARGET: PENGINGAT TAGIHAN JATUH TEMPO -->
+        <section id="sec-bills" class="bg-ivory-50 dark:bg-slate-900 border border-amber-200/70 dark:border-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="font-bold text-base sm:text-lg flex items-center gap-2">
+                <i data-lucide="bell-ring" class="w-5 h-5 text-amber-600 dark:text-amber-400"></i>
+                Pengingat Tagihan
+              </h2>
+              <p class="text-xs text-stone-500 dark:text-slate-400">Notifikasi otomatis H-3 jatuh tempo</p>
+            </div>
+            <button onclick="openModal('billModal')" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold flex items-center gap-1 shadow-sm transition">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> Tagihan
+            </button>
+          </div>
+
+          <div id="billsList" class="space-y-2.5"></div>
+        </section>
+
+      </div>
+
+      <!-- RIGHT COLUMN (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+
+        <!-- STEP 5 TARGET: GRAFIK & RIWAYAT TRANSAKSI -->
+        <section id="sec-history-chart" class="space-y-6">
+
+          <div class="bg-ivory-50 dark:bg-slate-900 border border-amber-200/70 dark:border-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h2 class="font-bold text-base sm:text-lg flex items-center gap-2">
+                  <i data-lucide="bar-chart-3" class="w-5 h-5 text-amber-600 dark:text-amber-400"></i>
+                  Visualisasi Pengeluaran
+                </h2>
+                <p class="text-xs text-stone-500 dark:text-slate-400">Proporsi realisasi pos anggaran bulan terpilih</p>
+              </div>
+              <div class="flex gap-1 bg-ivory-200/80 dark:bg-slate-800 p-1 rounded-xl">
+                <button onclick="switchChart('doughnut')" id="btnChartDoughnut" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500 text-white">Donat</button>
+                <button onclick="switchChart('bar')" id="btnChartBar" class="px-2.5 py-1 rounded-lg text-xs font-bold text-stone-600 dark:text-slate-300">Batang</button>
+              </div>
+            </div>
+            <div class="h-56 relative flex items-center justify-center">
+              <canvas id="expenseChart"></canvas>
+            </div>
+          </div>
+
+          <div class="bg-ivory-50 dark:bg-slate-900 border border-amber-200/70 dark:border-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+              <div>
+                <h2 class="font-bold text-base sm:text-lg flex items-center gap-2">
+                  <i data-lucide="history" class="w-5 h-5 text-amber-600 dark:text-amber-400"></i>
+                  Riwayat Transaksi
+                </h2>
+                <p id="txCountLabel" class="text-xs text-stone-500 dark:text-slate-400">0 transaksi bulan ini</p>
+              </div>
+              <select id="typeFilter" onchange="renderAll()" class="px-3 py-1.5 rounded-xl bg-ivory-100 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 text-xs font-semibold focus:outline-none">
+                <option value="all">Semua Transaksi</option>
+                <option value="expense">Pengeluaran Saja</option>
+                <option value="income">Pemasukan Saja</option>
+              </select>
+            </div>
+
+            <div id="txList" class="space-y-3"></div>
+          </div>
+
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER WITH WHATSAPP CTA -->
+  <footer class="mt-10 border-t border-amber-200/70 dark:border-slate-800 bg-ivory-50/80 dark:bg-slate-900/80 py-6 px-4">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <div>
+        <p class="font-bold text-sm text-stone-800 dark:text-stone-100">DompetCerdas — Aplikasi Pencatat Keuangan Pribadi</p>
+        <p class="text-xs text-stone-500 dark:text-slate-400 mt-0.5">100% Privasi Aman • Data keuangan tersimpan lokal di perangkat Anda.</p>
+      </div>
+      <div class="flex flex-wrap items-center justify-center gap-2">
+        <button onclick="openModal('guideModal')" class="px-3.5 py-2 rounded-xl bg-ivory-200 hover:bg-amber-200/70 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-stone-700 dark:text-stone-200 transition flex items-center gap-1.5">
+          <i data-lucide="help-circle" class="w-4 h-4 text-amber-600"></i> Cara Pakai
+        </button>
+        <a id="footerWaLink" href="#" target="_blank" rel="noopener" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+          <i data-lucide="message-circle" class="w-4 h-4"></i> Order / Konsultasi WA
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL 1: INTERACTIVE ONBOARDING TOUR -->
+  <div id="tourModal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-xs">
+    <div class="bg-ivory-50 dark:bg-slate-900 border-2 border-amber-400 dark:border-amber-500/70 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl transform transition-all">
+      <div class="flex items-center justify-between mb-3">
+        <span id="tourStepBadge" class="px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 text-xs font-extrabold">
+          Langkah 1 dari 5
+        </span>
+        <button onclick="closeTour()" class="text-xs font-semibold text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 flex items-center gap-1">
+          Tutup <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="flex items-start gap-3 mb-3">
+        <div id="tourIconBox" class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-md">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 id="tourTitle" class="font-extrabold text-base sm:text-lg text-stone-800 dark:text-white leading-snug">Selamat Datang di DompetCerdas!</h3>
+          <p id="tourDesc" class="text-xs sm:text-sm text-stone-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+            Mari kenali menu utama aplikasi ini dalam 30 detik agar pencatatan keuangan Anda makin rapi.
+          </p>
+        </div>
+      </div>
+
+      <div id="tourDots" class="flex items-center gap-1.5 my-4"></div>
+
+      <div class="flex items-center justify-between gap-2 pt-2 border-t border-amber-200/60 dark:border-slate-800">
+        <button id="tourPrevBtn" onclick="prevTourStep()" class="px-3.5 py-2 rounded-xl bg-stone-200/80 hover:bg-stone-300/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-stone-700 dark:text-slate-200 transition">
+          ← Kembali
+        </button>
+        <div class="flex items-center gap-2 ml-auto">
+          <button onclick="closeTour()" class="px-3 py-2 rounded-xl text-xs font-semibold text-stone-500 hover:text-stone-700 dark:text-slate-400">
+            Lewati
+          </button>
+          <button id="tourNextBtn" onclick="nextTourStep()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white text-xs font-bold shadow-md transition">
+            Lanjut →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: PANDUAN PENGGUNAAN & CTA WHATSAPP -->
+  <div id="guideModal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-xs">
+    <div class="bg-ivory-50 dark:bg-slate-900 border border-amber-200 dark:border-slate-700 rounded-2xl max-w-lg w-full max-h-[88vh] flex flex-col shadow-2xl">
+      <div class="p-4 sm:p-5 border-b border-amber-200/70 dark:border-slate-800 flex items-center justify-between">
+        <h3 class="font-extrabold text-base sm:text-lg flex items-center gap-2">
+          <i data-lucide="book-open" class="w-5 h-5 text-amber-600"></i>
+          Panduan Penggunaan Aplikasi
+        </h3>
+        <button onclick="closeModal('guideModal')" class="p-1.5 rounded-lg hover:bg-stone-200/60 dark:hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 sm:p-5 overflow-y-auto space-y-3 text-xs sm:text-sm text-stone-700 dark:text-slate-300 leading-relaxed">
+        <div class="p-3 rounded-xl bg-amber-100/70 dark:bg-amber-950/40 border border-amber-300/70 dark:border-amber-800/60">
+          <p class="font-bold text-amber-900 dark:text-amber-300 mb-1">💡 Tips Mulai dari Nol:</p>
+          <p>Saat pertama dibuka, aplikasi menampilkan data simulasi. Untuk menghapusnya dan mulai mencatat keuangan Anda sendiri, klik tombol <strong>Data</strong> di menu atas → pilih <strong>Kosongkan Semua Data</strong>.</p>
+        </div>
+
+        <ol class="list-decimal pl-5 space-y-2.5">
+          <li><strong>Aktivasi Lisensi / Free Trial 30 Hari:</strong> Masukkan kode lisensi dari admin atau klik <em>"Mulai Coba Gratis 30 Hari"</em> saat pertama membuka aplikasi.</li>
+          <li><strong>Pasang di Layar Utama HP:</strong> Buka menu titik tiga di browser Chrome/Safari, lalu pilih <em>"Instal aplikasi"</em> atau <em>"Tambahkan ke Layar Utama"</em>.</li>
+          <li><strong>Catat Pemasukan Terlebih Dahulu:</strong> Pilih tab <strong>Pemasukan (+)</strong>, isi nominal gaji/hasil usaha, lalu simpan. Sistem otomatis menghitung batas ideal <strong>50% Pokok, 30% Keinginan, dan 20% Tabungan</strong>.</li>
+          <li><strong>Catat Pengeluaran Harian:</strong> Gunakan tombol <strong>Isi Cepat (Quick Tags)</strong> atau isi manual sesuai pos anggaran.</li>
+          <li><strong>Backup & Ekspor Excel (CSV):</strong> Gunakan menu <strong>Data</strong> di pojok kanan atas untuk mengunduh laporan CSV atau cadangan file JSON kapan saja.</li>
+        </ol>
+
+        <div class="pt-3 border-t border-amber-200/70 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <button onclick="closeModal('guideModal'); startTour(0);" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-amber-100 hover:bg-amber-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-800 dark:text-amber-300 font-bold text-xs flex items-center justify-center gap-1.5">
+            <i data-lucide="compass" class="w-4 h-4"></i> Ulangi Tur Interaktif
+          </button>
+          <a id="modalWaLink" href="#" target="_blank" rel="noopener" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm">
+            <i data-lucide="message-circle" class="w-4 h-4"></i> Order / Konsultasi via WA
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: TAMBAH TAGIHAN -->
+  <div id="billModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
+    <div class="bg-ivory-50 dark:bg-slate-900 border border-amber-200 dark:border-slate-700 rounded-2xl max-w-md w-full p-5 shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-extrabold text-base flex items-center gap-2">
+          <i data-lucide="bell-plus" class="w-5 h-5 text-amber-600"></i>
+          Tambah Pengingat Tagihan
+        </h3>
+        <button onclick="closeModal('billModal')" class="p-1 rounded-lg hover:bg-stone-200/60 dark:hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <form id="billForm" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-semibold mb-1">Nama Tagihan</label>
+          <input type="text" id="billName" placeholder="Contoh: Listrik PLN / WiFi / Cicilan" required class="w-full px-3.5 py-2.5 rounded-xl bg-ivory-100 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1">Nominal Tagihan (Rp)</label>
+          <input type="text" id="billAmount" inputmode="numeric" placeholder="0" required class="w-full px-3.5 py-2.5 rounded-xl bg-ivory-100 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1">Tanggal Jatuh Tempo</label>
+          <input type="date" id="billDue" required class="w-full px-3.5 py-2.5 rounded-xl bg-ivory-100 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm shadow-md transition">
+          Simpan Pengingat Tagihan
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 4: DATA, EKSPOR CSV/JSON & RESET -->
+  <div id="dataModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
+    <div class="bg-ivory-50 dark:bg-slate-900 border border-amber-200 dark:border-slate-700 rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-extrabold text-base flex items-center gap-2">
+          <i data-lucide="database" class="w-5 h-5 text-amber-600"></i>
+          Manajemen Data & Laporan
+        </h3>
+        <button onclick="closeModal('dataModal')" class="p-1 rounded-lg hover:bg-stone-200/60 dark:hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-2.5">
+        <button onclick="exportCSV()" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition">
+          <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Unduh Laporan Excel (.CSV)
+        </button>
+        <button onclick="exportJSON()" class="w-full py-2.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition">
+          <i data-lucide="download" class="w-4 h-4"></i> Backup Data Lengkap (.JSON)
+        </button>
+        <label class="w-full py-2.5 px-4 rounded-xl bg-ivory-200 hover:bg-amber-200/70 dark:bg-slate-800 dark:hover:bg-slate-700 text-stone-800 dark:text-stone-200 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition">
+          <i data-lucide="upload" class="w-4 h-4 text-amber-600"></i> Pulihkan Backup (.JSON)
+          <input type="file" accept=".json" onchange="importJSON(event)" class="hidden" />
+        </label>
+      </div>
+
+      <div class="pt-3 border-t border-amber-200/70 dark:border-slate-800">
+        <p class="text-xs text-stone-500 dark:text-slate-400 mb-2">Ingin menghapus data simulasi awal dan mulai mencatat dari nol?</p>
+        <button onclick="clearAllData()" class="w-full py-2.5 px-4 rounded-xl bg-rose-100 hover:bg-rose-200 dark:bg-rose-950/60 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 font-bold text-xs flex items-center justify-center gap-2 transition">
+          <i data-lucide="trash-2" class="w-4 h-4"></i> Kosongkan Semua Data (Mulai dari Nol)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2 px-4 py-3 rounded-xl bg-stone-900 dark:bg-amber-500 text-white dark:text-slate-950 text-xs sm:text-sm font-bold shadow-xl">
+    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+    <span id="toastMsg">Berhasil disimpan!</span>
+  </div>
+
+  <script>
+    // =========================================================
+    // 1. KONFIGURASI GOOGLE APPS SCRIPT & NOMOR WHATSAPP ADMIN
+    // =========================================================
+    // TEMPEL URL WEB APP GOOGLE APPS SCRIPT (BERAKHIRAN /exec) DI BAWAH INI:
+    const LICENSE_API_URL = 'https://script.google.com/macros/s/AKfycby_mziOQtDodVEQF7BBZIrYXEvNUbx8Q8cGQt1984MyvYlxBTY0qDnDWAoohWs7-P4z/exec';
+
+    const SELLER_WHATSAPP = '6282325654740';
+    const WA_MESSAGE = encodeURIComponent('Halo Mas Wahyudi, saya ingin mendapatkan Kode Lisensi Penuh aplikasi DompetCerdas.');
+    const WA_URL = `https://wa.me/${SELLER_WHATSAPP}?text=${WA_MESSAGE}`;
+
+    document.getElementById('footerWaLink').href = WA_URL;
+    document.getElementById('modalWaLink').href = WA_URL;
+    document.getElementById('gateWaLink').href = WA_URL;
+
+    // =========================================================
+    // 2. SISTEM LISENSI & FREE TRIAL 30 HARI (TERHUBUNG GOOGLE SHEETS)
+    // =========================================================
+    const LICENSE_STORAGE_KEY = 'dompetcerdas_license_v1';
+    const DEVICE_ID_KEY = 'dompetcerdas_device_id_v1';
+
+    function getDeviceId() {
+      let devId = localStorage.getItem(DEVICE_ID_KEY);
+      if (!devId) {
+        devId = 'DEV-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Date.now().toString(36).toUpperCase();
+        localStorage.setItem(DEVICE_ID_KEY, devId);
+      }
+      return devId;
+    }
+
+    function showLicenseAlert(msg, isError = true) {
+      const box = document.getElementById('licenseAlert');
+      box.textContent = msg;
+      box.classList.remove('hidden');
+      box.className = isError
+        ? 'mb-4 p-3 rounded-xl text-xs font-semibold border bg-rose-100/90 border-rose-300 text-rose-800 dark:bg-rose-950/70 dark:border-rose-800 dark:text-rose-200'
+        : 'mb-4 p-3 rounded-xl text-xs font-semibold border bg-emerald-100/90 border-emerald-300 text-emerald-800 dark:bg-emerald-950/70 dark:border-emerald-800 dark:text-emerald-200';
+    }
+
+    function applyUnlockedLicense(licData) {
+      localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify({
+        ...licData,
+        lastChecked: new Date().toISOString().slice(0, 10)
+      }));
+
+      document.getElementById('licenseGate').classList.add('hidden');
+      const banner = document.getElementById('licenseStatusBanner');
+      const statusText = document.getElementById('licenseStatusText');
+      banner.classList.remove('hidden');
+
+      if (licData.type === 'TRIAL') {
+        statusText.textContent = `Mode Free Trial (${licData.name || 'Pengguna'}) • Sisa ${licData.remainingDays} hari`;
+      } else {
+        statusText.textContent = `Lisensi Aktif: ${licData.name || 'Pengguna Terdaftar'} (${licData.code})`;
+      }
+      lucide.createIcons();
+
+      if (!localStorage.getItem(TOUR_KEY)) {
+        setTimeout(() => startTour(0), 500);
+      }
+    }
+
+    function openLicenseGateForUpgrade() {
+      document.getElementById('licenseAlert').classList.add('hidden');
+      document.getElementById('licenseGate').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    async function callLicenseServer(paramsObj) {
+      if (!LICENSE_API_URL || LICENSE_API_URL.includes('PASTE_URL_WEB_APP')) {
+        throw new Error('URL Google Apps Script belum dipasang oleh admin di file index.html.');
+      }
+      const query = new URLSearchParams(paramsObj).toString();
+      const res = await fetch(`${LICENSE_API_URL}?${query}`);
+      return await res.json();
+    }
+
+    document.getElementById('licenseForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const code = document.getElementById('licenseCodeInput').value.trim().toUpperCase();
+      if (!code) return;
+
+      const btn = document.getElementById('btnVerifyCode');
+      const origHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span>Memeriksa kode ke server...</span>';
+
+      try {
+        const result = await callLicenseServer({
+          action: 'verify',
+          code: code,
+          deviceId: getDeviceId()
+        });
+
+        if (result.ok) {
+          showLicenseAlert(result.message, false);
+          setTimeout(() => applyUnlockedLicense(result), 500);
+        } else {
+          showLicenseAlert(result.message || 'Kode lisensi tidak valid.');
+        }
+      } catch (err) {
+        showLicenseAlert(err.message || 'Gagal terhubung ke server lisensi. Periksa koneksi internet Anda.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+        lucide.createIcons();
+      }
+    });
+
+    async function activateFreeTrial() {
+      const userName = document.getElementById('trialNameInput').value.trim() || 'Pengguna Trial';
+      const btn = document.getElementById('btnStartTrial');
+      const origHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span>Mengaktifkan Trial 30 Hari...</span>';
+
+      try {
+        const result = await callLicenseServer({
+          action: 'register_trial',
+          deviceId: getDeviceId(),
+          userName: userName
+        });
+
+        if (result.ok) {
+          showLicenseAlert(result.message, false);
+          setTimeout(() => applyUnlockedLicense(result), 500);
+        } else {
+          showLicenseAlert(result.message || 'Tidak dapat mengaktifkan Free Trial.');
+        }
+      } catch (err) {
+        showLicenseAlert(err.message || 'Gagal terhubung ke server lisensi. Periksa koneksi internet Anda.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+        lucide.createIcons();
+      }
+    }
+
+    async function checkSavedLicenseOnBoot() {
+      const devId = getDeviceId();
+      document.getElementById('deviceIdDisplay').textContent = `ID Perangkat: ${devId}`;
+
+      const savedRaw = localStorage.getItem(LICENSE_STORAGE_KEY);
+      if (!savedRaw) {
+        document.getElementById('licenseGate').classList.remove('hidden');
+        return;
+      }
+
+      let saved;
+      try {
+        saved = JSON.parse(savedRaw);
+      } catch (e) {
+        localStorage.removeItem(LICENSE_STORAGE_KEY);
+        document.getElementById('licenseGate').classList.remove('hidden');
+        return;
+      }
+
+      // Buka dulu secara cepat jika tersimpan, lalu sinkronisasi ulang status ke Google Sheets di latar belakang
+      applyUnlockedLicense(saved);
+
+      try {
+        const fresh = await callLicenseServer({
+          action: 'verify',
+          code: saved.code,
+          deviceId: devId
+        });
+
+        if (fresh.ok) {
+          applyUnlockedLicense(fresh);
+        } else {
+          // Jika admin memblokir kode di Google Sheets atau masa trial habis -> kunci kembali
+          localStorage.removeItem(LICENSE_STORAGE_KEY);
+          document.getElementById('licenseStatusBanner').classList.add('hidden');
+          document.getElementById('licenseGate').classList.remove('hidden');
+          showLicenseAlert(fresh.message || 'Akses lisensi Anda telah berakhir atau dinonaktifkan.');
+        }
+      } catch (err) {
+        // Jika sedang offline sementara, izinkan tetap pakai cache lokal yang sudah tervalidasi
+      }
+    }
+
+    // =========================================================
+    // 3. PWA MANIFEST, PNG APP ICON GENERATOR & SERVICE WORKER
+    // =========================================================
+    (function setupPWA() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d');
+
+      const grad = ctx.createLinearGradient(0, 0, 512, 512);
+      grad.addColorStop(0, '#F59E0B');
+      grad.addColorStop(1, '#EA580C');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(0, 0, 512, 512, 112);
+      ctx.fill();
+
+      ctx.fillStyle = '#FFFDF9';
+      ctx.beginPath();
+      ctx.roundRect(108, 152, 296, 224, 42);
+      ctx.fill();
+
+      ctx.fillStyle = '#FDE68A';
+      ctx.beginPath();
+      ctx.roundRect(136, 124, 232, 44, 20);
+      ctx.fill();
+
+      ctx.fillStyle = '#EA580C';
+      ctx.beginPath();
+      ctx.roundRect(316, 232, 96, 68, 24);
+      ctx.fill();
+
+      ctx.fillStyle = '#FFFDF9';
+      ctx.beginPath();
+      ctx.arc(352, 266, 14, 0, Math.PI * 2);
+      ctx.fill();
+
+      const pngIconUrl = canvas.toDataURL('image/png');
+      document.getElementById('app-favicon').href = pngIconUrl;
+      document.getElementById('app-apple-icon').href = pngIconUrl;
+
+      const manifestObj = {
+        name: 'DompetCerdas — Keuangan Pribadi',
+        short_name: 'DompetCerdas',
+        description: 'Aplikasi Pencatat Keuangan Pribadi & Alokasi Cerdas 50/30/20',
+        start_url: window.location.href,
+        scope: window.location.origin + '/',
+        display: 'standalone',
+        orientation: 'portrait',
+        background_color: '#FDF8EE',
+        theme_color: '#F59E0B',
+        icons: [
+          { src: pngIconUrl, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+          { src: pngIconUrl, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+        ]
+      };
+      const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
+      document.getElementById('pwa-manifest').href = URL.createObjectURL(manifestBlob);
+
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        const swCode = `
+          self.addEventListener('install', (e) => self.skipWaiting());
+          self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+          self.addEventListener('fetch', (e) => {
+            e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+          });
+        `;
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+      }
+    })();
+
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const banner = document.getElementById('installBanner');
+      banner.classList.remove('hidden');
+      lucide.createIcons();
+    });
+
+    document.getElementById('btnInstallPwa').addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        document.getElementById('installBanner').classList.add('hidden');
+      }
+      deferredPrompt = null;
+    });
+
+    // =========================================================
+    // 4. STATE KEUANGAN & DEFAULT SAMPLE DATA
+    // =========================================================
+    const STORAGE_KEY = 'dompetcerdas_v2_data';
+    const TOUR_KEY = 'dompetcerdas_v2_tour_done';
+    const THEME_KEY = 'dompetcerdas_v2_theme';
+
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const currentMonthStr = todayStr.slice(0, 7);
+
+    const defaultState = {
+      transactions: [
+        { id: 'tx-1', type: 'income', amount: 6500000, bucket: 'income', note: 'Gaji / Pemasukan Utama', date: `${currentMonthStr}-01` },
+        { id: 'tx-2', type: 'expense', amount: 1650000, bucket: 'pokok', note: 'Belanja Kebutuhan Dapur & Beras', date: `${currentMonthStr}-06` },
+        { id: 'tx-3', type: 'expense', amount: 750000, bucket: 'pokok', note: 'Token Listrik & Air PDAM', date: `${currentMonthStr}-08` },
+        { id: 'tx-4', type: 'expense', amount: 450000, bucket: 'pokok', note: 'BBM & Transportasi Harian', date: `${currentMonthStr}-10` },
+        { id: 'tx-5', type: 'expense', amount: 620000, bucket: 'keinginan', note: 'Makan di Luar & Kopi Akhir Pekan', date: `${currentMonthStr}-12` },
+        { id: 'tx-6', type: 'expense', amount: 1200000, bucket: 'tabungan', note: 'Setoran Tabungan & Dana Darurat', date: `${currentMonthStr}-15` }
+      ],
+      bills: [
+        { id: 'bill-1', name: 'Internet WiFi Rumah', amount: 320000, due: `${currentMonthStr}-25`, paid: false },
+        { id: 'bill-2', name: 'Tagihan Listrik Pascabayar', amount: 450000, due: `${currentMonthStr}-28`, paid: false }
+      ]
+    };
+
+    let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState;
+    let chartType = 'doughnut';
+    let chartInstance = null;
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function formatRp(num) {
+      return 'Rp ' + Math.round(num || 0).toLocaleString('id-ID');
+    }
+
+    function formatDateID(dateStr) {
+      if (!dateStr) return '-';
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+      const [y, m, d] = dateStr.split('-');
+      return `${parseInt(d, 10)} ${months[parseInt(m, 10) - 1]} ${y}`;
+    }
+
+    function attachRupiahMask(inputEl) {
+      inputEl.addEventListener('input', (e) => {
+        const raw = e.target.value.replace(/[^0-9]/g, '');
+        e.target.value = raw ? parseInt(raw, 10).toLocaleString('id-ID') : '';
+      });
+    }
+
+    function parseRupiah(val) {
+      return parseInt((val || '0').replace(/[^0-9]/g, ''), 10) || 0;
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      t.classList.remove('hidden');
+      t.classList.add('flex');
+      setTimeout(() => {
+        t.classList.add('hidden');
+        t.classList.remove('flex');
+      }, 2600);
+    }
+
+    function initTheme() {
+      const saved = localStorage.getItem(THEME_KEY) || 'light';
+      document.documentElement.classList.toggle('dark', saved === 'dark');
+      updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const icon = document.getElementById('themeIcon');
+      icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+      lucide.createIcons();
+    }
+
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+      updateThemeIcon();
+      renderChart();
+    });
+
+    function setTxType(type) {
+      document.getElementById('txType').value = type;
+      const btnExp = document.getElementById('btnTypeExpense');
+      const btnInc = document.getElementById('btnTypeIncome');
+      const bucketField = document.getElementById('bucketField');
+      const quickTags = document.getElementById('quickTagsBox');
+
+      if (type === 'expense') {
+        btnExp.className = 'py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-rose-600 text-white shadow-sm';
+        btnInc.className = 'py-2 rounded-lg text-xs sm:text-sm font-bold transition text-stone-600 dark:text-slate-300';
+        bucketField.classList.remove('hidden');
+        quickTags.classList.remove('hidden');
+      } else {
+        btnInc.className = 'py-2 rounded-lg text-xs sm:text-sm font-bold transition bg-emerald-600 text-white shadow-sm';
+        btnExp.className = 'py-2 rounded-lg text-xs sm:text-sm font-bold transition text-stone-600 dark:text-slate-300';
+        bucketField.classList.add('hidden');
+        quickTags.classList.add('hidden');
+      }
+    }
+
+    function applyQuickTag(note, amount, bucket) {
+      setTxType('expense');
+      document.getElementById('txNote').value = note;
+      document.getElementById('txAmount').value = amount.toLocaleString('id-ID');
+      document.getElementById('txBucket').value = bucket;
+      document.getElementById('txDate').value = todayStr;
+      showToast(`Template "${note}" diisi!`);
+    }
+
+    document.getElementById('txForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const editId = document.getElementById('editTxId').value;
+      const type = document.getElementById('txType').value;
+      const amount = parseRupiah(document.getElementById('txAmount').value);
+      const bucket = type === 'income' ? 'income' : document.getElementById('txBucket').value;
+      const note = document.getElementById('txNote').value.trim();
+      const date = document.getElementById('txDate').value;
+
+      if (amount <= 0) return showToast('Masukkan nominal lebih dari 0');
+
+      if (editId) {
+        const idx = state.transactions.findIndex(t => t.id === editId);
+        if (idx > -1) state.transactions[idx] = { id: editId, type, amount, bucket, note, date };
+        showToast('Transaksi diperbarui!');
+      } else {
+        state.transactions.unshift({
+          id: 'tx-' + Date.now(),
+          type, amount, bucket, note, date
+        });
+        showToast('Transaksi berhasil dicatat!');
+      }
+
+      saveState();
+      resetForm();
+      renderAll();
+    });
+
+    function editTx(id) {
+      const tx = state.transactions.find(t => t.id === id);
+      if (!tx) return;
+      document.getElementById('editTxId').value = tx.id;
+      setTxType(tx.type);
+      document.getElementById('txAmount').value = tx.amount.toLocaleString('id-ID');
+      if (tx.type === 'expense') document.getElementById('txBucket').value = tx.bucket;
+      document.getElementById('txNote').value = tx.note;
+      document.getElementById('txDate').value = tx.date;
+      document.getElementById('formTitle').textContent = 'Edit Transaksi';
+      document.getElementById('submitBtnText').textContent = 'Simpan Perubahan';
+      document.getElementById('cancelEditBtn').classList.remove('hidden');
+      document.getElementById('sec-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function deleteTx(id) {
+      if (!confirm('Hapus transaksi ini?')) return;
+      state.transactions = state.transactions.filter(t => t.id !== id);
+      saveState();
+      renderAll();
+      showToast('Transaksi dihapus');
+    }
+
+    function resetForm() {
+      document.getElementById('txForm').reset();
+      document.getElementById('editTxId').value = '';
+      document.getElementById('txDate').value = todayStr;
+      document.getElementById('formTitle').textContent = 'Catat Transaksi Cepat';
+      document.getElementById('submitBtnText').textContent = 'Simpan Transaksi';
+      document.getElementById('cancelEditBtn').classList.add('hidden');
+      setTxType('expense');
+    }
+
+    document.getElementById('billForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('billName').value.trim();
+      const amount = parseRupiah(document.getElementById('billAmount').value);
+      const due = document.getElementById('billDue').value;
+      if (amount <= 0) return;
+
+      state.bills.push({ id: 'bill-' + Date.now(), name, amount, due, paid: false });
+      saveState();
+      e.target.reset();
+      closeModal('billModal');
+      renderBills();
+      showToast('Pengingat tagihan ditambahkan!');
+    });
+
+    function payBill(id) {
+      const bill = state.bills.find(b => b.id === id);
+      if (!bill || bill.paid) return;
+      bill.paid = true;
+      state.transactions.unshift({
+        id: 'tx-' + Date.now(),
+        type: 'expense',
+        amount: bill.amount,
+        bucket: 'pokok',
+        note: `Bayar Tagihan: ${bill.name}`,
+        date: todayStr
+      });
+      saveState();
+      renderAll();
+      showToast(`Tagihan "${bill.name}" lunas & tercatat!`);
+    }
+
+    function deleteBill(id) {
+      state.bills = state.bills.filter(b => b.id !== id);
+      saveState();
+      renderBills();
+    }
+
+    function getFilteredTransactions() {
+      const month = document.getElementById('monthFilter').value;
+      return state.transactions.filter(t => !month || t.date.startsWith(month));
+    }
+
+    function renderAll() {
+      const txs = getFilteredTransactions();
+      const income = txs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+      const expense = txs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+      const balance = income - expense;
+
+      const spentPokok = txs.filter(t => t.type === 'expense' && t.bucket === 'pokok').reduce((s, t) => s + t.amount, 0);
+      const spentKeinginan = txs.filter(t => t.type === 'expense' && t.bucket === 'keinginan').reduce((s, t) => s + t.amount, 0);
+      const spentTabungan = txs.filter(t => t.type === 'expense' && t.bucket === 'tabungan').reduce((s, t) => s + t.amount, 0);
+
+      document.getElementById('netBalance').textContent = formatRp(balance);
+      document.getElementById('totalIncome').textContent = formatRp(income);
+      document.getElementById('totalExpense').textContent = formatRp(expense);
+
+      const expPct = income > 0 ? Math.round((expense / income) * 100) : 0;
+      const savPct = income > 0 ? Math.round((spentTabungan / income) * 100) : 0;
+      document.getElementById('expensePercentText').textContent = `${expPct}% dari total pemasukan`;
+      document.getElementById('savingsRateText').textContent = `Realisasi tabungan: ${savPct}% (Target 20%)`;
+
+      const buckets = [
+        { key: 'pokok', title: '50% Kebutuhan Pokok', pct: 0.5, spent: spentPokok, barColor: 'bg-amber-500' },
+        { key: 'keinginan', title: '30% Keinginan', pct: 0.3, spent: spentKeinginan, barColor: 'bg-orange-500' },
+        { key: 'tabungan', title: '20% Tabungan & Investasi', pct: 0.2, spent: spentTabungan, barColor: 'bg-emerald-500' }
+      ];
+
+      document.getElementById('allocationCards').innerHTML = buckets.map(b => {
+        const limit = income * b.pct;
+        const ratio = limit > 0 ? Math.min(100, Math.round((b.spent / limit) * 100)) : (b.spent > 0 ? 100 : 0);
+        const isOver = b.key !== 'tabungan' && limit > 0 && b.spent > limit;
+        const barCls = isOver ? 'bg-rose-600' : b.barColor;
+        const statusBadge = isOver
+          ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">Melebihi Batas!</span>`
+          : `<span class="text-[10px] font-semibold text-stone-500 dark:text-slate-400">${ratio}% terpakai</span>`;
+
+        return `
+          <div class="p-4 rounded-xl bg-ivory-100/80 dark:bg-slate-800/70 border border-amber-200/60 dark:border-slate-700/80">
+            <div class="flex items-center justify-between gap-1 mb-1.5">
+              <span class="font-bold text-xs sm:text-sm">${b.title}</span>
+              ${statusBadge}
+            </div>
+            <div class="text-base sm:text-lg font-extrabold text-stone-800 dark:text-white">${formatRp(b.spent)}</div>
+            <div class="text-[11px] text-stone-500 dark:text-slate-400 mb-2">Target ideal: <strong>${formatRp(limit)}</strong></div>
+            <div class="w-full h-2 rounded-full bg-stone-200 dark:bg-slate-700 overflow-hidden">
+              <div class="h-full ${barCls} transition-all duration-300" style="width: ${ratio}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const typeFilter = document.getElementById('typeFilter').value;
+      const filteredList = txs.filter(t => typeFilter === 'all' || t.type === typeFilter);
+      document.getElementById('txCountLabel').textContent = `${filteredList.length} transaksi ditampilkan`;
+
+      const bucketBadges = {
+        pokok: { label: '50% Pokok', cls: 'bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300', icon: 'utensils' },
+        keinginan: { label: '30% Keinginan', cls: 'bg-orange-100 text-orange-800 dark:bg-orange-950/80 dark:text-orange-300', icon: 'coffee' },
+        tabungan: { label: '20% Tabungan', cls: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300', icon: 'piggy-bank' },
+        income: { label: 'Pemasukan', cls: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300', icon: 'wallet' }
+      };
+
+      if (filteredList.length === 0) {
+        document.getElementById('txList').innerHTML = `
+          <div class="text-center py-8 text-stone-400 dark:text-slate-500 text-xs sm:text-sm">
+            Belum ada catatan transaksi pada periode ini.
+          </div>
+        `;
+      } else {
+        document.getElementById('txList').innerHTML = filteredList.map(tx => {
+          const meta = bucketBadges[tx.bucket] || bucketBadges.pokok;
+          const isInc = tx.type === 'income';
+          const amountCls = isInc ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
+          const prefix = isInc ? '+' : '-';
+
+          return `
+            <div class="p-3.5 rounded-xl bg-ivory-100/80 dark:bg-slate-800/60 border border-amber-200/60 dark:border-slate-700/80 flex flex-col gap-2.5">
+              <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-slate-700 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 mt-0.5">
+                  <i data-lucide="${meta.icon}" class="w-4 h-4"></i>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="font-bold text-sm text-stone-800 dark:text-stone-100 break-words leading-snug">${tx.note}</p>
+                  <div class="flex flex-wrap items-center gap-1.5 mt-1">
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md ${meta.cls}">${meta.label}</span>
+                    <span class="text-[11px] text-stone-500 dark:text-slate-400">• ${formatDateID(tx.date)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between pt-2 border-t border-amber-200/50 dark:border-slate-700/70">
+                <span class="font-extrabold text-sm sm:text-base ${amountCls}">${prefix}${formatRp(tx.amount)}</span>
+                <div class="flex items-center gap-1.5">
+                  <button onclick="editTx('${tx.id}')" title="Edit" class="p-1.5 rounded-lg bg-ivory-200/80 hover:bg-amber-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-stone-600 dark:text-slate-200 transition">
+                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button onclick="deleteTx('${tx.id}')" title="Hapus" class="p-1.5 rounded-lg bg-rose-100/80 hover:bg-rose-200 dark:bg-rose-950/60 dark:hover:bg-rose-900 text-rose-600 dark:text-rose-300 transition">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      renderBills();
+      renderChart(spentPokok, spentKeinginan, spentTabungan);
+      lucide.createIcons();
+    }
+
+    function renderBills() {
+      const listEl = document.getElementById('billsList');
+      if (state.bills.length === 0) {
+        listEl.innerHTML = `<p class="text-xs text-stone-400 dark:text-slate-500 text-center py-4">Belum ada pengingat tagihan.</p>`;
+        return;
+      }
+
+      const today = new Date(todayStr);
+      listEl.innerHTML = state.bills.map(b => {
+        const dueDate = new Date(b.due);
+        const diffDays = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+        let badge = '';
+
+        if (b.paid) {
+          badge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">Lunas</span>`;
+        } else if (diffDays < 0) {
+          badge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">Terlambat ${Math.abs(diffDays)} hari</span>`;
+        } else if (diffDays <= 3) {
+          badge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">Jatuh tempo H-${diffDays}</span>`;
+        } else {
+          badge = `<span class="text-[10px] font-semibold text-stone-500 dark:text-slate-400">Tempo: ${formatDateID(b.due)}</span>`;
+        }
+
+        return `
+          <div class="p-3 rounded-xl bg-ivory-100/80 dark:bg-slate-800/60 border border-amber-200/60 dark:border-slate-700/80 flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <p class="font-bold text-xs sm:text-sm truncate ${b.paid ? 'line-through opacity-60' : ''}">${b.name}</p>
+              <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
+                <span class="text-xs font-extrabold text-amber-700 dark:text-amber-400">${formatRp(b.amount)}</span>
+                ${badge}
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              ${!b.paid ? `<button onclick="payBill('${b.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition">Tandai Lunas</button>` : ''}
+              <button onclick="deleteBill('${b.id}')" class="p-1.5 rounded-lg text-stone-400 hover:text-rose-600">
+                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function switchChart(type) {
+      chartType = type;
+      document.getElementById('btnChartDoughnut').className = type === 'doughnut'
+        ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500 text-white'
+        : 'px-2.5 py-1 rounded-lg text-xs font-bold text-stone-600 dark:text-slate-300';
+      document.getElementById('btnChartBar').className = type === 'bar'
+        ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500 text-white'
+        : 'px-2.5 py-1 rounded-lg text-xs font-bold text-stone-600 dark:text-slate-300';
+      renderAll();
+    }
+
+    function renderChart(pokok = 0, keinginan = 0, tabungan = 0) {
+      const ctx = document.getElementById('expenseChart');
+      if (!ctx) return;
+      if (chartInstance) chartInstance.destroy();
+
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#CBD5E1' : '#44403C';
+
+      chartInstance = new Chart(ctx, {
+        type: chartType,
+        data: {
+          labels: ['50% Pokok', '30% Keinginan', '20% Tabungan'],
+          datasets: [{
+            label: 'Realisasi (Rp)',
+            data: [pokok, keinginan, tabungan],
+            backgroundColor: ['#F59E0B', '#EA580C', '#10B981'],
+            borderWidth: 0,
+            borderRadius: chartType === 'bar' ? 8 : 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: chartType === 'doughnut',
+              position: 'bottom',
+              labels: { color: textColor, font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' } }
+            }
+          },
+          scales: chartType === 'bar' ? {
+            x: { ticks: { color: textColor }, grid: { display: false } },
+            y: { ticks: { color: textColor }, grid: { color: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' } }
+          } : {}
+        }
+      });
+    }
+
+    function exportCSV() {
+      const rows = [['Tanggal', 'Jenis', 'Pos Anggaran', 'Keterangan', 'Nominal']];
+      state.transactions.forEach(t => {
+        rows.push([t.date, t.type === 'income' ? 'Pemasukan' : 'Pengeluaran', t.bucket, `"${t.note.replace(/"/g, '""')}"`, t.amount]);
+      });
+      const csvContent = 'data:text/csv;charset=utf-8,' + rows.map(e => e.join(',')).join('\n');
+      const link = document.createElement('a');
+      link.setAttribute('href', encodeURI(csvContent));
+      link.setAttribute('download', `Laporan-DompetCerdas-${todayStr}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('File CSV berhasil diunduh!');
+    }
+
+    function exportJSON() {
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(state, null, 2));
+      const link = document.createElement('a');
+      link.setAttribute('href', dataStr);
+      link.setAttribute('download', `Backup-DompetCerdas-${todayStr}.json`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Backup JSON berhasil diunduh!');
+    }
+
+    function importJSON(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const parsed = JSON.parse(ev.target.result);
+          if (Array.isArray(parsed.transactions)) {
+            state = parsed;
+            saveState();
+            renderAll();
+            closeModal('dataModal');
+            showToast('Data backup berhasil dipulihkan!');
+          }
+        } catch (err) {
+          alert('Format file JSON tidak valid.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function clearAllData() {
+      if (!confirm('Yakin ingin menghapus seluruh data simulasi dan mulai mencatat dari Rp 0?')) return;
+      state = { transactions: [], bills: [] };
+      saveState();
+      renderAll();
+      closeModal('dataModal');
+      showToast('Semua data dikosongkan. Siap mencatat dari nol!');
+    }
+
+    function openModal(id) {
+      const el = document.getElementById(id);
+      el.classList.remove('hidden');
+      el.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      el.classList.add('hidden');
+      el.classList.remove('flex');
+    }
+
+    const tourSteps = [
+      {
+        target: 'sec-summary',
+        icon: 'landmark',
+        title: '1. Ringkasan Saldo & Filter Bulan',
+        desc: 'Pantau sisa saldo bersih, total pemasukan, dan total pengeluaran secara real-time. Gunakan pemilih bulan di pojok kanan atas untuk melihat laporan per periode.'
+      },
+      {
+        target: 'sec-allocation',
+        icon: 'pie-chart',
+        title: '2. Alokasi Cerdas 50 / 30 / 20',
+        desc: 'Begitu Anda mencatat pemasukan, sistem otomatis menghitung batas anggaran ideal untuk Kebutuhan Pokok (50%), Keinginan (30%), dan Tabungan (20%).'
+      },
+      {
+        target: 'sec-form',
+        icon: 'plus-circle',
+        title: '3. Catat Transaksi Cepat & Quick Tags',
+        desc: 'Pilih Pemasukan atau Pengeluaran, atau klik tombol "Isi Cepat" (Makan, Bensin, Kopi) untuk mencatat pengeluaran rutin dalam 1 detik.'
+      },
+      {
+        target: 'sec-bills',
+        icon: 'bell-ring',
+        title: '4. Pengingat Tagihan Jatuh Tempo',
+        desc: 'Tambahkan daftar tagihan listrik, WiFi, atau cicilan. Aplikasi akan memberi peringatan mulai H-3 dan otomatis mencatat ke pengeluaran saat Anda klik "Tandai Lunas".'
+      },
+      {
+        target: 'sec-history-chart',
+        icon: 'bar-chart-3',
+        title: '5. Grafik, Riwayat & Ekspor Data',
+        desc: 'Lihat grafik pengeluaran, edit/hapus transaksi, atau klik menu "Data" di bagian atas untuk mengunduh laporan Excel (CSV) maupun menghapus data simulasi awal.'
+      }
+    ];
+
+    let currentTourIdx = 0;
+
+    function clearTourHighlights() {
+      document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+    }
+
+    function startTour(idx = 0) {
+      currentTourIdx = idx;
+      renderTourStep();
+      openModal('tourModal');
+    }
+
+    function renderTourStep() {
+      clearTourHighlights();
+      const step = tourSteps[currentTourIdx];
+      const targetEl = document.getElementById(step.target);
+      if (targetEl) {
+        targetEl.classList.add('tour-highlight');
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      document.getElementById('tourStepBadge').textContent = `Langkah ${currentTourIdx + 1} dari ${tourSteps.length}`;
+      document.getElementById('tourTitle').textContent = step.title;
+      document.getElementById('tourDesc').textContent = step.desc;
+      document.getElementById('tourIconBox').innerHTML = `<i data-lucide="${step.icon}" class="w-5 h-5"></i>`;
+
+      document.getElementById('tourPrevBtn').style.visibility = currentTourIdx === 0 ? 'hidden' : 'visible';
+      document.getElementById('tourNextBtn').textContent = currentTourIdx === tourSteps.length - 1 ? 'Selesai ✓' : 'Lanjut →';
+
+      document.getElementById('tourDots').innerHTML = tourSteps.map((_, i) => `
+        <span class="h-1.5 rounded-full transition-all ${i === currentTourIdx ? 'w-6 bg-amber-500' : 'w-2 bg-stone-300 dark:bg-slate-700'}"></span>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function nextTourStep() {
+      if (currentTourIdx < tourSteps.length - 1) {
+        currentTourIdx++;
+        renderTourStep();
+      } else {
+        closeTour();
+      }
+    }
+
+    function prevTourStep() {
+      if (currentTourIdx > 0) {
+        currentTourIdx--;
+        renderTourStep();
+      }
+    }
+
+    function closeTour() {
+      clearTourHighlights();
+      closeModal('tourModal');
+      localStorage.setItem(TOUR_KEY, 'true');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeTour();
+        ['guideModal', 'billModal', 'dataModal'].forEach(closeModal);
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      document.getElementById('monthFilter').value = currentMonthStr;
+      document.getElementById('txDate').value = todayStr;
+      document.getElementById('billDue').value = todayStr;
+
+      attachRupiahMask(document.getElementById('txAmount'));
+      attachRupiahMask(document.getElementById('billAmount'));
+
+      document.getElementById('monthFilter').addEventListener('change', renderAll);
+
+      renderAll();
+      checkSavedLicenseOnBoot();
+    });
+  </script>
+</body>
+</html>
